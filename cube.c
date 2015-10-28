@@ -28,8 +28,7 @@ void
 kill_wizards(struct wizard *w)
 {
   /* Fill in */
-
-
+  // Kill all threads (I think)
   return;
 }
 
@@ -37,21 +36,22 @@ int
 check_winner(struct cube* cube)
 {
   /* Fill in */
+  // Function returns: 0 = No winner, 1 = team A wins, 2 = team B wins
   int frozenCount;
   int i;
-  for (i = 0; i < cube->teamA_size; i++)
-  {
-    frozenCount += cube->teamA_wizards[i]->status;
-  }
-  if (frozenCount == cube->teamA_size) return 1; // Team A loses
-
-  frozenCount = 0;
-  i = 0;
   for (i = 0; i < cube->teamB_size; i++)
   {
     frozenCount += cube->teamB_wizards[i]->status;
   }
-  if (frozenCount == cube->teamB_size) return 2; // Team B loses
+  if (frozenCount == cube->teamB_size) return 1; // Team A wins
+
+  frozenCount = 0;
+  i = 0;
+  for (i = 0; i < cube->teamA_size; i++)
+  {
+    frozenCount += cube->teamA_wizards[i]->status;
+  }
+  if (frozenCount == cube->teamA_size) return 2; // Team B wins
 
   return 0;
 }
@@ -466,17 +466,15 @@ choose_room(struct wizard* w)
   }
 
   return w->cube->rooms[(w->x + w->cube->size + newx) % w->cube->size][(w->y + w->cube->size + newy) % w->cube->size];
-
 }
 
 int 
 try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
 {
-
   /* Fill in */
-
-  return 1;
-  
+  // Checks to see if the newroom is full or not? Not sure what this function should do
+  if (newroom->wizards[0] == NULL || newroom->wizards[1] == NULL) return 1;
+  return 0;  
 }
 
 struct wizard *
