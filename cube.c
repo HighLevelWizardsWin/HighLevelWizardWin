@@ -18,12 +18,14 @@
 #define TRUE 1
 #define FALSE 0
 
-void command_line_usage()
+void 
+command_line_usage()
 {
   fprintf(stderr, "-size <size of cube> -teamA <size of team> -teamB <size of team> -seed <seed value>\n"); 
 }
 
-void kill_wizards(struct wizard *w)
+void 
+kill_wizards(struct wizard *w)
 {
   /* Fill in */
 
@@ -31,14 +33,31 @@ void kill_wizards(struct wizard *w)
   return;
 }
 
-int check_winner(struct cube* cube)
+int 
+check_winner(struct cube* cube)
 {
   /* Fill in */
+  int frozenCount;
+  int i;
+  for (i = 0; i < cube->teamA_size; i++)
+  {
+    frozenCount += cube->teamA_wizards[i]->status;
+  }
+  if (frozenCount == cube->teamA_size) return 1; // Team A loses
+
+  frozenCount = 0;
+  i = 0;
+  for (i = 0; i < cube->teamB_size; i++)
+  {
+    frozenCount += cube->teamB_wizards[i]->status;
+  }
+  if (frozenCount == cube->teamB_size) return 2; // Team B loses
 
   return 0;
 }
 
-void print_cube(struct cube *cube)
+void 
+print_cube(struct cube *cube)
 {
   int i;
   int j;
@@ -111,64 +130,60 @@ struct wizard *init_wizard(struct cube* cube, char team, int id)
   y = rand() % cube->size;
   
   if (cube->rooms[x][y]->wizards[0] == NULL)
-    {
-      cube->rooms[x][y]->wizards[0] = w;
-      w->x = x;
-      w->y = y;
-    }
+  {
+    cube->rooms[x][y]->wizards[0] = w;
+    w->x = x;
+    w->y = y;
+  }
   else if (cube->rooms[x][y]->wizards[1] == NULL)
-    {
-      cube->rooms[x][y]->wizards[1] = w;
-      w->x = x;
-      w->y = y;
-    }
+  {
+    cube->rooms[x][y]->wizards[1] = w;
+    w->x = x;
+    w->y = y;
+  }
   else
+  {
+    newx = (x + 1) % cube->size;
+    if (newx == 0) newy = (y + 1) % cube->size;
+    else newy = y;
+
+    while((newx != x || newy != y) && !initflag)
     {
-      newx = (x + 1) % cube->size;
-      if (newx == 0) newy = (y + 1) % cube->size;
-      else newy = y;
-
-      while((newx != x || newy != y) && !initflag)
-	{
-
-	  if (cube->rooms[newx][newy]->wizards[0] == NULL)
-	    {
-	      cube->rooms[newx][newy]->wizards[0] = w;
-	      w->x = newx;
-	      w->y = newy;
-	      initflag = TRUE;
-	    }
-	  else if (cube->rooms[newx][newy]->wizards[1] == NULL)
-	    {
-	      cube->rooms[newx][newy]->wizards[1] = w;
-	      w->x = newx;
-	      w->y = newy;
-	      initflag = TRUE;
-	    }
-	  else
-	    {
-	      newx = (newx + 1) % cube->size;
-	      
-	      if (newx == 0)
-		{
-		  newy = (newy + 1) % cube->size;
-		}
-	    }
-	  
-	}
-      if (!initflag){
-	free(w);
-	return NULL;
+      if (cube->rooms[newx][newy]->wizards[0] == NULL)
+      {
+        cube->rooms[newx][newy]->wizards[0] = w;
+        w->x = newx;
+        w->y = newy;
+        initflag = TRUE;
+      }
+      else if (cube->rooms[newx][newy]->wizards[1] == NULL)
+      {
+        cube->rooms[newx][newy]->wizards[1] = w;
+        w->x = newx;
+        w->y = newy;
+        initflag = TRUE;
+      }
+      else
+      {
+        newx = (newx + 1) % cube->size;
+        if (newx == 0) newy = (newy + 1) % cube->size;
       }
     }
+    if (!initflag)
+    {
+      free(w);
+      return NULL;
+    }
+  }
 
-  /* Fill in */
+/* Fill in */
 
 
   return w;
 }
 
-int interface(void *cube_ref)
+int 
+interface(void *cube_ref)
 {
   struct cube* cube;
   char *line;
@@ -237,7 +252,8 @@ int interface(void *cube_ref)
   return 0;
 }
 
-int main(int argc, char** argv)
+int 
+main(int argc, char** argv)
 {
   int cube_size = DEFAULT_CUBE_SIZE;
   int teamA_size = DEFAULT_TEAM_SIZE;
@@ -432,7 +448,8 @@ void dostuff()
   return;
 }
 
-struct room * choose_room(struct wizard* w)
+struct room * 
+choose_room(struct wizard* w)
 {
   int newx = 0; 
   int newy = 0;
@@ -452,14 +469,18 @@ struct room * choose_room(struct wizard* w)
 
 }
 
-int try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
+int 
+try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
 {
+
   /* Fill in */
-  
+
   return 1;
+  
 }
 
-struct wizard * find_opponent(struct wizard* self, struct room *room)
+struct wizard *
+find_opponent(struct wizard* self, struct room *room)
 {
   struct wizard *other = NULL;
 
@@ -476,7 +497,8 @@ struct wizard * find_opponent(struct wizard* self, struct room *room)
   return other;
 }
 
-void switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
+void 
+switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
 {
   struct wizard *other;
 
@@ -491,7 +513,8 @@ void switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
     }
   else /* This should never happen */
     {
-      printf("Wizard %c%d in room (%d,%d) can't find self!\n", w->team, w->id, oldroom->x, oldroom->y);
+      printf("Wizard %c%d in room (%d,%d) can't find self!\n",
+	     w->team, w->id, oldroom->x, oldroom->y);
       print_cube(w->cube);
       exit(1);
     }
@@ -522,7 +545,8 @@ void switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
   w->y = newroom->y;
 }
 
-int fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
+int 
+fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
 {
   int res;
 
@@ -556,7 +580,8 @@ int fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
   return 0;
 }
 
-int free_wizard(struct wizard *self, struct wizard *other, struct room* room)
+int 
+free_wizard(struct wizard *self, struct wizard *other, struct room* room)
 {
   int res;
 
