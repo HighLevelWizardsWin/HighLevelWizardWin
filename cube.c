@@ -107,7 +107,7 @@ print_cube(struct cube *cube)
     printf("--+");
   }
   printf("\n");
-  
+
   return;
 }
 
@@ -128,6 +128,7 @@ struct wizard *init_wizard(struct cube* cube, char team, int id)
   w->status = 0;
   w->cube = cube;
   
+  // Begin Wizard Placement
   x = rand() % cube->size;
   y = rand() % cube->size;
   
@@ -136,12 +137,14 @@ struct wizard *init_wizard(struct cube* cube, char team, int id)
     cube->rooms[x][y]->wizards[0] = w;
     w->x = x;
     w->y = y;
+    initflag = TRUE;
   }
   else if (cube->rooms[x][y]->wizards[1] == NULL)
   {
     cube->rooms[x][y]->wizards[1] = w;
     w->x = x;
     w->y = y;
+    initflag = TRUE;
   }
   else
   {
@@ -171,16 +174,18 @@ struct wizard *init_wizard(struct cube* cube, char team, int id)
         if (newx == 0) newy = (newy + 1) % cube->size;
       }
     }
+
     if (!initflag)
     {
       free(w);
       return NULL;
     }
   }
+  // End Wizard Placement
 
-/* Fill in */
-
-
+  /* Fill in */
+  // No idea what to fill in here. Wizard initialization and placement is finished.
+  // Maybe handle (in a different function) beginning battles?
   return w;
 }
 
@@ -386,7 +391,7 @@ main(int argc, char** argv)
   	  room_col[j] = room;
 
   	  /* Fill in */
-
+      // Looks fine to me...not sure what to add.
   	}
         
     cube->rooms[i] = room_col;
@@ -401,7 +406,6 @@ main(int argc, char** argv)
   cube->teamB_size = teamB_size;
   cube->teamB_wizards = (struct wizard **)malloc(sizeof(struct wizard *) * 
 						 teamB_size);
-
   assert(cube->teamB_wizards);
 
   /* Team A */
@@ -428,7 +432,9 @@ main(int argc, char** argv)
   }
 
   /* Fill in */
-  
+  /* Main game loop? 
+        Create all threads
+        Call functions correctly */
 
   /* Goes in the interface loop */
   res = interface(cube);
@@ -560,20 +566,18 @@ fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
      other->team, other->id);
 
     /* Fill in */
+    // Not sure what's needed
+    return 1;
   }
 
   /* Self freezes and release the lock */
-  else
-  {
 
-    printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d\n",
-     self->team, self->id, room->x, room->y,
-     other->team, other->id);
+  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d\n",
+   self->team, self->id, room->x, room->y,
+   other->team, other->id);
 
-    /* Fill in */
-
-    return 1;
-  }
+  /* Fill in */
+  // Not sure what's needed
 
   return 0;
 }
@@ -594,7 +598,8 @@ free_wizard(struct wizard *self, struct wizard *other, struct room* room)
      other->team, other->id);
 
     /* Fill in */
-    
+    // Not sure what's needed
+    return 1;    
   }
 
   /* The spell failed */
