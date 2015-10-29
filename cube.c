@@ -191,6 +191,10 @@ struct wizard *init_wizard(struct cube* cube, char team, int id)
   return w;
 }
 
+/*************************************************************************/
+/************************** PROGRAM CONTROL ******************************/
+/*************************************************************************/
+
 int 
 interface(void *cube_ref)
 {
@@ -439,8 +443,7 @@ main(int argc, char** argv)
 
   /* Fill in */
   /* Main game loop? 
-        Create all threads
-        Call functions correctly */
+        Create all threads? */
 
   /* Goes in the interface loop */
   res = interface(cube);
@@ -448,6 +451,9 @@ main(int argc, char** argv)
   exit(res);
 }
 
+/*************************************************************************/
+/************************* THREADED FUNCTIONS ****************************/
+/*************************************************************************/
 void dostuff()
 {
   int i;
@@ -531,6 +537,7 @@ switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
   }
 
   /* Fill in */
+  // Seems fine to me. I don't see anything to add
 
   /* Updates room wizards and determines opponent */
   if (newroom->wizards[0] == NULL)
@@ -567,7 +574,7 @@ fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
   /* The opponent becomes frozen */
   if (res == 0)
   {
-    printf("Wizard %c%d in room (%d,%d) freezes enemy %c%d\n",
+    printf("Wizard %c%d in room (%d,%d) freezes enemy %c%d. HUZZAH!\n",
      self->team, self->id, room->x, room->y,
      other->team, other->id);
 
@@ -578,7 +585,7 @@ fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
 
   /* Self freezes and release the lock */
 
-  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d\n",
+  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d. Drat!\n",
    self->team, self->id, room->x, room->y,
    other->team, other->id);
 
@@ -599,7 +606,7 @@ free_wizard(struct wizard *self, struct wizard *other, struct room* room)
   /* The friend is unfrozen */
   if (res == 0)
   {
-    printf("Wizard %c%d in room (%d,%d) unfreezes friend %c%d\n",
+    printf("Wizard %c%d in room (%d,%d) unfreezes friend %c%d. Yay friendship!\n",
      self->team, self->id, room->x, room->y,
      other->team, other->id);
 
@@ -609,7 +616,7 @@ free_wizard(struct wizard *self, struct wizard *other, struct room* room)
   }
 
   /* The spell failed */
-  printf("Wizard %c%d in room (%d,%d) fails to unfreeze friend %c%d\n",
+  printf("Wizard %c%d in room (%d,%d) fails to unfreeze friend %c%d. Brrrr...\n",
 	self->team, self->id, room->x, room->y,
 	other->team, other->id);
 

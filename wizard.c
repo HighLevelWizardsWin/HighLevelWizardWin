@@ -41,7 +41,7 @@ void *wizard_func(void *wizard_descr)
 	    if (!try_room(self, oldroom, newroom))
 	    {
           /* Waits a random amount of time */
-          printf("Too bad! The door is locked. You should learn teleport.");
+          printf("The door is locked. You should learn teleport.");
           dostuff();
           
           /* Chooses the new room */
@@ -58,7 +58,8 @@ void *wizard_func(void *wizard_descr)
 	     oldroom->x, oldroom->y, newroom->x, newroom->y);
   
       /* Fill in */
-        
+      // I don't see anything that should go here 
+
       /* Self is active and has control over both rooms */
       switch_rooms(self, oldroom, newroom);
   
@@ -70,11 +71,11 @@ void *wizard_func(void *wizard_descr)
   	    printf("Wizard %c%d in room (%d,%d) finds nobody around:  ¯\_(ツ)_/¯  \n",
   	  	 self->team, self->id, newroom->x, newroom->y);
   	    /* Fill in */
+  	    // Seems fine to me...
   	  }
       else
   	  {
-  	    /* Other is from opposite team */
-  	    if (other->team != self->team)
+  	    if (other->team != self->team) /* Other is from opposite team */
   	    {
   	      /* Checks if the opponent is active */
   	      if (other->status == 0)
@@ -86,7 +87,7 @@ void *wizard_func(void *wizard_descr)
   	  	  }
   	      else
   	  	  {
-  	  	    printf("Wizard %c%d in room (%d,%d) finds enemy already frozen\n",
+  	  	    printf("Wizard %c%d in room (%d,%d) finds enemy already frozen. What a nerd.\n",
   	  		 self->team, self->id, newroom->x, newroom->y);
   	  	  }
   	    }
@@ -97,9 +98,15 @@ void *wizard_func(void *wizard_descr)
   	  	  {
   	  	    free_wizard(self, other, newroom);
   	  	  }
+  	  	  else
+  	  	  {
+  	  	  	printf("The Wizards flex at each other. This could last hours.");
+  	  	  	dostuff(); // The flexing time
+  	  	  }
   	    }
   
   	    /* Fill in */
+  	    // I think this is done
   
   	  }
   
