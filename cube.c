@@ -36,9 +36,11 @@ int
 check_winner(struct cube* cube)
 {
   /* Fill in */
+
   // Function returns: 0 = No winner, 1 = team A wins, 2 = team B wins
-  // Or have function only be called when game is over. Then 0 and 1 can be used
-  //    to determine winner
+  /* Or have function only be called when game is over. Then 0 and 1 can be used
+        to determine winner  */
+
   int frozenCount;
   int i;
   for (i = 0; i < cube->teamB_size; i++)
@@ -222,34 +224,38 @@ interface(void *cube_ref)
   	{
   	  print_cube(cube);
   	}
-    else if (!strcmp(command, "start"))
+    else if (!strcmp(command, "s"))
 	  {
-	    if (cube->game_status == 1)
-	    {
-	      fprintf(stderr, "Game is over. Cannot be started again\n");
-	    }
-	    else if (cube->game_status == 0)
-	    {
-	      fprintf(stderr, "Game is in progress. Cannot be started again\n");
-	    }
+	    if (cube->game_status == 1) fprintf(stderr, "Game is over. Cannot be started again\n");
+
 	    else
-	    {
-	      cube->game_status = 0;
+	    { 
+	      cube->game_status = 0; // For first iteration through the loop, shows game is running
 	      
 	      /* Start the game */
 
 	      /* Fill in */
 	    }
 	  }
+    else if (!strcmp(command, "c"))
+    {
+      if (cube->game_status == 1) fprintf(stderr, "Game is over. Cannot be started again\n");
+
+      else
+      { 
+        cube->game_status = 0; // For first iteration through the loop, shows game is running
+        
+        /* Start the game */
+
+        /* Fill in */
+      }  
+    }
     else if (!strcmp(command, "stop"))
   	{
   	  /* Stop the game */
   	  return 1;
   	}
-    else
-	  {
-	    fprintf(stderr, "unknown command %s\n", command);
-	  }
+    else fprintf(stderr, "unknown command %s\n", command);
 
     free(line);
   }

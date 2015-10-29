@@ -38,6 +38,8 @@ struct cube {
   /* Fill in as required */
 };
 
+// Define semaphores here that need to be shared with wizard files.
+
 extern void print_wizard(struct wizard *);
 extern void kill_wizards(struct wizard *);
 extern void print_cube(struct cube *);
