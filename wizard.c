@@ -77,10 +77,9 @@ void *wizard_func(void *wizard_descr)
   	  {
   	    if (other->team != self->team) /* Other is from opposite team */
   	    {
-  	      /* Checks if the opponent is active */
-  	      if (other->status == 0)
+  	      if (other->status == 0) /* Checks if the opponent is active */
   	      {
-  	  	  printf("Wizard %c%d in room (%d,%d) finds active enemy\n",
+  	  	  printf("Wizard %c%d in room (%d,%d) finds active enemy. AGH!\n",
   	  	  self->team, self->id, newroom->x, newroom->y);
   
   	  	  fight_wizard(self, other, newroom);
@@ -93,12 +92,11 @@ void *wizard_func(void *wizard_descr)
   	    }
   	    else /* Other is from same team */
   	    {
-  	      /* Checks if the friend is frozen */
-  	      if (other->status == 1)
+  	      if (other->status == 1) /* Checks if the friend is frozen */
   	  	  {
   	  	    free_wizard(self, other, newroom);
   	  	  }
-  	  	  else
+  	  	  else /* Friend is not frozen. BRAG TIME! */
   	  	  {
   	  	  	printf("The Wizards flex at each other. This could last hours.");
   	  	  	dostuff(); // The flexing time
