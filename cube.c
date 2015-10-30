@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <assert.h>
-#include <semaphore.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
