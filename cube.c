@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <assert.h>
+#include <semaphore.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -18,8 +19,7 @@
 #define TRUE 1
 #define FALSE 0
 
-void 
-command_line_usage()
+void command_line_usage()
 {
   fprintf(stderr, "-size <size of cube> -teamA <size of team> -teamB <size of team> -seed <seed value>\n");
 }
@@ -52,13 +52,12 @@ int check_winner(struct cube* cube)
     if(cube->teamB_wizards[i]->status == 1){frozenCountB++;}
     //fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
   }
-  if (frozenCountB == teamB_size) {return 1;} // Team A wins
-  else if (frozenCountA == teamA_size) {return 2;} // Team B wins
-  else {return 0;} //it's a tie
+  if (frozenCountB == cube->teamB_size) {return 1;} // Team A wins
+  else if (frozenCountA == cube->teamA_size) {return 2;} // Team B wins
+  else {return 0;} //it's a tie/game is still going
 }
 
-void 
-print_cube(struct cube *cube)
+void print_cube(struct cube *cube)
 {
   int i;
   int j;
@@ -483,6 +482,8 @@ int main(int argc, char** argv)
   /* Fill in */
   /* Main game loop? 
         Create all threads? */
+
+  //## I might copy the code currently in the continuous section and make the threads here and then immeditately lock them, then jump into the interface and control the threads from there. but currently the functions are working and we can change that at a later time
 
   /* Goes in the interface loop */
   res = interface(cube);

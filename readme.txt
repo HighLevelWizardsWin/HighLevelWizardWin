@@ -1,0 +1,1 @@
+KK## -- I might copy the code currently in the continuous section and make the threads here <line 486> and then immeditately lock them, then jump into the interface and control the threads from there. but currently the functions are working and we can change that at a later time
