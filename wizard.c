@@ -39,23 +39,23 @@ void *wizard_func(void *wizard_descr)
   while (1)
   {
   	// check if the thread should be killed or not, if so kill it here
-	if(self->threadKill == 1)
-	{
-		printf("Wizard %c%d killed its thread \n", self->team, self->id);
-		pthread_exit(NULL);
-	}
-	else {printf("threadKill == %d \n", self->threadKill);}
+	  if(self->threadKill == 1)
+	  {
+	  	printf("Wizard %c%d killed its thread \n", self->team, self->id);
+	  	pthread_exit(NULL);
+	  }
+	  else printf("threadKill == %d \n", self->threadKill);
 
   	if (self->status == 0) // Needed? Could be controlled somewhere else
   	{
       /* Loops until he's able to get a hold on both the old and new rooms */
       while (1)
-	  {
-	    printf("Wizard %c%d in room (%d,%d) wants to go to room (%d,%d)\n",
-	    self->team, self->id, oldroom->x, oldroom->y, newroom->x, newroom->y);
-	    
-	    if (!try_room(self, oldroom, newroom))
 	    {
+	      printf("Wizard %c%d in room (%d,%d) wants to go to room (%d,%d)\n",
+	      self->team, self->id, oldroom->x, oldroom->y, newroom->x, newroom->y);
+	    
+	      if (!try_room(self, oldroom, newroom))
+	      {
           /* Waits a random amount of time */
           printf("The door is locked. You should learn teleport. \n");
           dostuff();
@@ -66,8 +66,8 @@ void *wizard_func(void *wizard_descr)
           /* Goes back to the initial state and try again */
           continue;
         }
-	    else break;
-	  }
+	      else break;
+	    }
         
       printf("Wizard %c%d in room (%d,%d) moves to room (%d,%d)\n",
 	     self->team, self->id, 
@@ -129,8 +129,6 @@ void *wizard_func(void *wizard_descr)
   
       oldroom = newroom;
       newroom = choose_room(self);
-
-      
     }
   }
   
