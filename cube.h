@@ -3,6 +3,8 @@
 
 #define SOLUTION
 
+#include <semaphore.h>
+
 struct cube;
 
 struct wizard {
