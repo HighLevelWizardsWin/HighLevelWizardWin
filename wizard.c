@@ -44,7 +44,7 @@ void *wizard_func(void *wizard_descr)
 	  	printf("Wizard %c%d killed its thread \n", self->team, self->id);
 	  	pthread_exit(NULL);
 	  }
-	  else printf("threadKill == %d \n", self->threadKill);
+	  else {printf("threadKill == %d \n", self->threadKill);}
 
   	if (self->status == 0) // Needed? Could be controlled somewhere else
   	{
