@@ -2,12 +2,20 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <assert.h>
+#include <unistd.h> //CHANGE ME REMOVE BEFORE TURNING IN
 
 #include "cube.h"
 #include "wizard.h"
 
+
 void *wizard_func(void *wizard_descr)
 {
+  
+  //pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+  //pthread_testcancel();
+  //pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+
   struct cube* cube;
   struct room *newroom;
   struct room *oldroom;
@@ -30,6 +38,14 @@ void *wizard_func(void *wizard_descr)
   /* Infinite loop */
   while (1)
   {
+  	// check if the thread should be killed or not, if so kill it here
+	if(self->threadKill == 1)
+	{
+		printf("Wizard %c%d killed its thread \n", self->team, self->id);
+		pthread_exit(NULL);
+	}
+	else {printf("threadKill == %d \n", self->threadKill);}
+
   	if (self->status == 0) // Needed? Could be controlled somewhere else
   	{
       /* Loops until he's able to get a hold on both the old and new rooms */
@@ -41,7 +57,7 @@ void *wizard_func(void *wizard_descr)
 	    if (!try_room(self, oldroom, newroom))
 	    {
           /* Waits a random amount of time */
-          printf("The door is locked. You should learn teleport.");
+          printf("The door is locked. You should learn teleport. \n");
           dostuff();
           
           /* Chooses the new room */
@@ -68,7 +84,7 @@ void *wizard_func(void *wizard_descr)
       /* If there is not another wizard does nothing */
       if (other == NULL)
   	  {
-  	    printf("Wizard %c%d in room (%d,%d) finds nobody around:  ¯\_(ツ)_/¯  \n",
+  	    printf("Wizard %c%d in room (%d,%d) finds nobody around:  ¯\\_(ツ)_/¯  \n",
   	  	 self->team, self->id, newroom->x, newroom->y);
   	    /* Fill in */
   	    // Seems fine to me...
@@ -98,21 +114,23 @@ void *wizard_func(void *wizard_descr)
   	  	  }
   	  	  else /* Friend is not frozen. BRAG TIME! */
   	  	  {
-  	  	  	printf("The Wizards flex at each other. This could last hours.");
+  	  	  	printf("The Wizards flex at each other. This could last hours. \n");
   	  	  	dostuff(); // The flexing time
   	  	  }
   	    }
   
   	    /* Fill in */
-  	    // I think this is done
+  	    
   
   	  }
-  
+
       /* Thinks about what to do next */
       dostuff();
   
       oldroom = newroom;
       newroom = choose_room(self);
+
+      
     }
   }
   
