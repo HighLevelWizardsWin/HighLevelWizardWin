@@ -52,8 +52,8 @@ int check_winner(struct cube* cube)
     if(cube->teamB_wizards[i]->status == 1){frozenCountB++;}
     //fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
   }
-  if (frozenCountB > frozenCountA) {return 1;} // Team A wins
-  else if (frozenCountB > frozenCountA) {return 2;} // Team B wins
+  if (frozenCountB == teamB_size) {return 1;} // Team A wins
+  else if (frozenCountA == teamA_size) {return 2;} // Team B wins
   else {return 0;} //it's a tie
 }
 
