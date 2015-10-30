@@ -24,16 +24,14 @@ command_line_usage()
   fprintf(stderr, "-size <size of cube> -teamA <size of team> -teamB <size of team> -seed <seed value>\n");
 }
 
-void 
-kill_wizards(struct wizard *w)
+void kill_wizards(struct wizard *w)
 {
   /* Fill in */
   // Kill all threads (I think)
   return;
 }
 
-int 
-check_winner(struct cube* cube)
+int check_winner(struct cube* cube)
 {
   /* Fill in */
 
@@ -41,23 +39,22 @@ check_winner(struct cube* cube)
   /* Or have function only be called when game is over. Then 0 and 1 can be used
         to determine winner  */
 
-  int frozenCount;
+  int frozenCountA, frozenCountB = 0;
   int i;
-  for (i = 0; i < cube->teamB_size; i++)
-  {
-    frozenCount += cube->teamB_wizards[i]->status;
-  }
-  if (frozenCount == cube->teamB_size) return 1; // Team A wins
-
-  frozenCount = 0;
-  i = 0;
   for (i = 0; i < cube->teamA_size; i++)
   {
-    frozenCount += cube->teamA_wizards[i]->status;
+    if(cube->teamA_wizards[i]->status == 1){frozenCountA++;}
+    //fprintf(stderr, "frozenCountA[%d]: %d \n",i, frozenCountA); //DEBUGGING
   }
-  if (frozenCount == cube->teamA_size) return 2; // Team B wins
 
-  return 0;
+  for (i = 0; i < cube->teamB_size; i++)
+  {
+    if(cube->teamB_wizards[i]->status == 1){frozenCountB++;}
+    //fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
+  }
+  if (frozenCountB > frozenCountA) {return 1;} // Team A wins
+  else if (frozenCountB > frozenCountA) {return 2;} // Team B wins
+  else {return 0;} //it's a tie
 }
 
 void 
@@ -195,19 +192,20 @@ struct wizard *init_wizard(struct cube* cube, char team, int id)
 /************************** PROGRAM CONTROL ******************************/
 /*************************************************************************/
 
-int 
-interface(void *cube_ref)
+int interface(void *cube_ref)
 {
   // Change "start" condition to "c" and "s"
   struct cube* cube;
   char *line;
   char *command;
   int i;
+  
 
   cube = (struct cube *)cube_ref;
   assert(cube);
 
   using_history();
+  pthread_t _wizards[cube->teamA_size + cube->teamB_size]; //creates an array of threads
   while (1)
   {
     line = readline("cube> ");
@@ -236,7 +234,8 @@ interface(void *cube_ref)
 	    { 
 	      cube->game_status = 0; // For first iteration through the loop, shows game is running
 	      
-	      /* Start the game */
+
+        /* Start the game */
 
 	      /* Fill in */
 	    }
@@ -249,6 +248,16 @@ interface(void *cube_ref)
       { 
         cube->game_status = 0; // For first iteration through the loop, shows game is running
         
+        for (i = 0; i < cube->teamA_size; i++)
+        {
+          pthread_create(&_wizards[i], NULL, *wizard_func, cube->teamA_wizards[i]);
+        }
+
+        for (i = 0; i < cube->teamB_size; i++)
+        {
+          pthread_create(&_wizards[cube->teamA_size + i - 1], NULL, *wizard_func, cube->teamB_wizards[i]);
+        }
+
         /* Start the game */
 
         /* Fill in */
@@ -257,7 +266,40 @@ interface(void *cube_ref)
     else if (!strcmp(command, "stop"))
   	{
   	  /* Stop the game */
-  	  return 1;
+      for(i=0; i < (cube->teamA_size); i++)
+      {
+        cube->teamA_wizards[i]->threadKill = 1;
+        //pthread_cancel(_wizards[i]);
+        //pthread_join(_wizards[i], NULL);
+      }
+      fprintf(stderr, "Killed team A \n");
+      for(i=0; i < (cube->teamB_size); i++)
+      {
+        cube->teamB_wizards[i]->threadKill = 1;
+        //pthread_cancel(_wizards[i]);
+        //pthread_join(_wizards[i], NULL);
+      }
+      fprintf(stderr, "Killed team B \n");
+
+      if(check_winner(cube) == 1)
+      {
+        print_cube(cube);
+        fprintf(stderr, "Team A wins \n");
+      }
+
+      if(check_winner(cube) == 2)
+      {
+        print_cube(cube);
+        fprintf(stderr, "Team B wins \n");
+      }
+
+      if(check_winner(cube) == 0)
+      {
+        print_cube(cube);
+        fprintf(stderr, "its a tie? \n");
+      }
+
+  	  //return 1;
   	}
     else fprintf(stderr, "unknown command %s\n", command);
 
@@ -267,8 +309,7 @@ interface(void *cube_ref)
   return 0;
 }
 
-int 
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   int cube_size = DEFAULT_CUBE_SIZE;
   int teamA_size = DEFAULT_TEAM_SIZE;
@@ -409,13 +450,11 @@ main(int argc, char** argv)
 
   /* Creates the wizards and positions them in the cube */
   cube->teamA_size = teamA_size;
-  cube->teamA_wizards = (struct wizard **)malloc(sizeof(struct wizard *) * 
-						 teamA_size);
+  cube->teamA_wizards = (struct wizard **)malloc(sizeof(struct wizard *) * teamA_size);
   assert(cube->teamA_wizards);
 
   cube->teamB_size = teamB_size;
-  cube->teamB_wizards = (struct wizard **)malloc(sizeof(struct wizard *) * 
-						 teamB_size);
+  cube->teamB_wizards = (struct wizard **)malloc(sizeof(struct wizard *) * teamB_size);
   assert(cube->teamB_wizards);
 
   /* Team A */
@@ -466,8 +505,7 @@ void dostuff()
   return;
 }
 
-struct room * 
-choose_room(struct wizard* w)
+struct room * choose_room(struct wizard* w)
 {
   int newx = 0; 
   int newy = 0;
@@ -487,8 +525,7 @@ choose_room(struct wizard* w)
   return w->cube->rooms[(w->x + w->cube->size + newx) % w->cube->size][(w->y + w->cube->size + newy) % w->cube->size];
 }
 
-int 
-try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
+int try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
 {
   /* Fill in */
   // Checks to see if the newroom is full or not? Not sure what this function should do
@@ -496,8 +533,7 @@ try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
   return 0;  
 }
 
-struct wizard *
-find_opponent(struct wizard* self, struct room *room)
+struct wizard *find_opponent(struct wizard* self, struct room *room)
 {
   struct wizard *other = NULL;
 
@@ -514,8 +550,7 @@ find_opponent(struct wizard* self, struct room *room)
   return other;
 }
 
-void 
-switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
+void switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
 {
   struct wizard *other;
 
@@ -563,8 +598,7 @@ switch_rooms(struct wizard *w, struct room *oldroom, struct room* newroom)
   w->y = newroom->y;
 }
 
-int 
-fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
+int fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
 {
   int res;
 
@@ -574,29 +608,26 @@ fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
   /* The opponent becomes frozen */
   if (res == 0)
   {
-    printf("Wizard %c%d in room (%d,%d) freezes enemy %c%d. HUZZAH!\n",
-     self->team, self->id, room->x, room->y,
-     other->team, other->id);
+    printf("Wizard %c%d in room (%d,%d) freezes enemy %c%d. HUZZAH!\n", self->team, self->id, room->x, room->y, other->team, other->id);
 
     /* Fill in */
-    // Not sure what's needed
+    //only thing I added was setting the status of the loser to 1 (frozen)
+    other->status = 1;
+    
     return 1;
   }
 
   /* Self freezes and release the lock */
 
-  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d. Drat!\n",
-   self->team, self->id, room->x, room->y,
-   other->team, other->id);
-
+  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d. Drat!\n", self->team, self->id, room->x, room->y, other->team, other->id);
+  self->status = 1;
   /* Fill in */
-  // Not sure what's needed
+  //only thing I added here was setting the status of the loser to 1 (frozen)
 
   return 0;
 }
 
-int 
-free_wizard(struct wizard *self, struct wizard *other, struct room* room)
+int free_wizard(struct wizard *self, struct wizard *other, struct room* room)
 {
   int res;
 

@@ -10,8 +10,9 @@ project1: cube.o wizard.o
 	gcc -o theCube cube.o wizard.o -lreadline -lhistory -lncurses -lpthread -I.
 	
 run: cube.o wizard.o
-	./theCube -size 2 -seed 2 -teamA 1 -teamB 2
+	./theCube -size 2 -seed 2 -teamA 4 -teamB 3
 	
 clean:
 	rm cube.o 
 	rm wizard.o
+	rm theCube

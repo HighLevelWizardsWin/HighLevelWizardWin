@@ -12,6 +12,7 @@ struct wizard {
   char team;
   int status; /* 0: alive, 1: frozen */
   struct cube *cube; 
+  int threadKill; /* 0: running, 1: kills thread after last move */
 
   /* Fill in as required */
 };
