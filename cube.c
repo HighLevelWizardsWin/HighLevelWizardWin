@@ -51,9 +51,17 @@ int check_winner(struct cube* cube)
     if(cube->teamB_wizards[i]->status == 1){frozenCountB++;}
     //fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
   }
-  if (frozenCountB == cube->teamB_size) {return 1;} // Team A wins
-  else if (frozenCountA == cube->teamA_size) {return 2;} // Team B wins
-  else {return 0;} //it's a tie/game is still going
+  if (frozenCountB == cube->teamB_size) // Team A wins
+  {
+    cube->game_status = 1;
+    return 1;
+  } 
+  else if (frozenCountA == cube->teamA_size) // Team B wins
+  {
+    cube->game_status = 1;
+    return 2;
+  }
+  else {return 0;} //game is still going
 }
 
 void print_cube(struct cube *cube)
@@ -216,14 +224,8 @@ int interface(void *cube_ref)
     while (isspace(line[i])) i++;
     
     command = &line[i];
-    if (!strcmp(command, "exit"))
-  	{
-  	  return 0;
-  	}
-    else if (!strcmp(command, "show"))
-  	{
-  	  print_cube(cube);
-  	}
+    if (!strcmp(command, "exit")) {return 0;} // Kill threads?
+    else if (!strcmp(command, "show")) {print_cube(cube);}
     else if (!strcmp(command, "s"))
 	  {
 	    if (cube->game_status == 1) fprintf(stderr, "Game is over. Cannot be started again\n");
@@ -240,8 +242,7 @@ int interface(void *cube_ref)
 	  }
     else if (!strcmp(command, "c"))
     {
-      if (cube->game_status == 1) fprintf(stderr, "Game is over. Cannot be started again\n");
-
+      if (cube->game_status == 1) {fprintf(stderr, "Game is over. Cannot be started again\n");}
       else
       { 
         cube->game_status = 0; // For first iteration through the loop, shows game is running
@@ -642,7 +643,8 @@ int free_wizard(struct wizard *self, struct wizard *other, struct room* room)
      other->team, other->id);
 
     /* Fill in */
-    // Not sure what's needed
+    // only thing I added here was setting the status of the friend to 0 (alive)
+    other->status = 0;
     return 1;    
   }
 
