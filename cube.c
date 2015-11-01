@@ -324,6 +324,7 @@ int main(int argc, char** argv)
   int res;
   struct wizard *wizard_descr;
   int i, j;
+  sem_init(&wizLock, 0, 0);
 
 
   /* Parse command line and fill:
@@ -534,7 +535,7 @@ int try_room(struct wizard *w, struct room *oldroom, struct room* newroom)
 {
   /* Fill in */
   // Checks to see if the newroom is full or not? Not sure what this function should do
-  if (newroom->wizards[0] == NULL || newroom->wizards[1] == NULL) return 1;
+  if (newroom->wizards[0] == NULL || newroom->wizards[1] == NULL) {return 1;}
   return 0;  
 }
 
