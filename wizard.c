@@ -45,6 +45,7 @@ void *wizard_func(void *wizard_descr)
 	if(self->threadKill == 1 || check_winner(cube))
 	{
 	  printf("Wizard %c%d killed its thread \n", self->team, self->id);
+    sem_post(&wizLock);
 	  pthread_exit(NULL);
 	}
 
