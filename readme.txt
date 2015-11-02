@@ -1,5 +1,2 @@
-KK## -- I might copy the code currently in the continuous section and make the threads here <line 486> and then immeditately lock them, then jump into the interface and control the threads from there. but currently the functions are working and we can change that at a later time
-
-KK## -- I didnt have time to but plan to add "sem_wait(&wizLock);" to the beginning of the wizard.c loop and then a "sem_post(&wizLock);" at the end, that would make each wizard wait for the the last one to finish before it can go. If you plan to try and add this functionality just know that you need to put this somewhere (maybe main?) "sem_init(&wizLock, 0, 0);" Details on what the parameters of sem_init are here http://www.csc.villanova.edu/~mdamian/threads/posixsem.html 2nd parameter should stay 0, third parameter looks like it is the number of processes that we want to allow access at a time. I'm unsure if that is what it means, but if it is, my understanding is that 0 means one process can access at a time.
-
-IE## -- 
+Kasey Kolyno U# 4204-0313
+Isaac Evans U# 0700-6952
