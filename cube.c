@@ -307,7 +307,7 @@ int interface(void *cube_ref)
   	  //return 1;
   	}
     else fprintf(stderr, "unknown command %s\n", command);
-
+    dostuff();
     free(line);
   }
 

@@ -40,7 +40,7 @@ void *wizard_func(void *wizard_descr)
   {
   init:
   sem_wait(&wizLock);
-
+  if (self->status == 1 && cube->game_status){sem_post(&wizLock);}
   int trys = 0;
 
   // check if the thread should be killed or not, if so kill it here
@@ -134,7 +134,12 @@ void *wizard_func(void *wizard_descr)
   	    }
   
   	    /* Fill in */
-  	    
+  	    if (cube->single)
+        {
+          int winner = check_winner(cube);
+          if(winner == 1){printf("Team A won the game! \n");}
+          else if(winner == 2){printf("Team B won the game! \n");}
+        }
   
   	  }
   	  if(!cube->single){sem_post(&wizLock);}
