@@ -39,7 +39,7 @@ void *wizard_func(void *wizard_descr)
   while (1)
   {
   	// check if the thread should be killed or not, if so kill it here
-	if(self->threadKill == 1)
+	if(self->threadKill == 1 || check_winner(cube))
 	{
 	  printf("Wizard %c%d killed its thread \n", self->team, self->id);
 	  pthread_exit(NULL);

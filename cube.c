@@ -55,17 +55,18 @@ int check_winner(struct cube* cube)
   {
     cube->game_status = 1;
     //print_cube(cube);
-    printf("Team A is the wisest of the wizard wars! (They won)");
+    //printf("Team A is the wisest of the wizard wars! (They won)");
     return 1;
   } 
   else if (frozenCountA == cube->teamA_size) // Team B wins
   {
     cube->game_status = 1;
     //print_cube(cube);
-    printf("Team B is the wisest of the wizard wars! (They won)");
+    //printf("Team B is the wisest of the wizard wars! (They won)");
     return 2;
   }
-  else {return 0;} //game is still going
+  else {print_cube(cube); return 0;} //game is still going
+
 }
 
 void print_cube(struct cube *cube)
