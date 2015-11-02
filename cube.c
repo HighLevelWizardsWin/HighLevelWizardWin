@@ -54,14 +54,14 @@ int check_winner(struct cube* cube)
   if (frozenCountB == cube->teamB_size) // Team A wins
   {
     cube->game_status = 1;
-    print_cube(cube);
+    //print_cube(cube);
     printf("Team A is the wisest of the wizard wars! (They won)");
     return 1;
   } 
   else if (frozenCountA == cube->teamA_size) // Team B wins
   {
     cube->game_status = 1;
-    print_cube(cube);
+    //print_cube(cube);
     printf("Team B is the wisest of the wizard wars! (They won)");
     return 2;
   }
@@ -324,7 +324,7 @@ int main(int argc, char** argv)
   int res;
   struct wizard *wizard_descr;
   int i, j;
-  sem_init(&wizLock, 0, 0);
+  sem_init(&wizLock, 0, 1);
 
 
   /* Parse command line and fill:
