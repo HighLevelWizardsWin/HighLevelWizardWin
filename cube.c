@@ -240,13 +240,13 @@ int interface(void *cube_ref)
 	    { 
 	      cube->game_status = 0; // For first iteration through the loop, shows game is running
 	    
-	    cube->single = 1;
+	      cube->single = 1;
         sem_post(&wizLock);
 
         int winner = 0;
-	  	winner = check_winner(cube);
+	  	  winner = check_winner(cube);
         if(winner == 1){printf("Team A won the game! \n");}
-	  	else if(winner == 2){printf("Team B won the game! \n");}
+	  	  else if(winner == 2){printf("Team B won the game! \n");}
 	    }
 	  }
     else if (!strcmp(command, "c"))
@@ -255,7 +255,8 @@ int interface(void *cube_ref)
       else
       { 
         cube->game_status = 0; // For first iteration through the loop, shows game is running
-        
+        cube->single = 0;
+
         sem_post(&wizLock);
 
         int winner = 0;
@@ -264,7 +265,7 @@ int interface(void *cube_ref)
 	  	    winner = check_winner(cube);
         }
         if(winner == 1){printf("Team A won the game! \n");}
-	  	else if(winner == 2){printf("Team B won the game! \n");}
+	  	  else if(winner == 2){printf("Team B won the game! \n");}
       }  
     }
     else if (!strcmp(command, "stop"))
