@@ -240,7 +240,9 @@ int interface(void *cube_ref)
 	    { 
 	      cube->game_status = 0; // For first iteration through the loop, shows game is running
 	      
-
+        sem_post(&wizLock);
+        dostuff();
+        sem_wait(&wizLock);
         /* Start the game */
 
 	      /* Fill in */

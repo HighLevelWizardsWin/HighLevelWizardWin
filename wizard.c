@@ -38,8 +38,10 @@ void *wizard_func(void *wizard_descr)
   /* Infinite loop */
   while (1)
   {
-
+  init:
   sem_wait(&wizLock);
+
+  int trys = 0;
 
   // check if the thread should be killed or not, if so kill it here
 	if(self->threadKill == 1 || check_winner(cube))
@@ -67,6 +69,14 @@ void *wizard_func(void *wizard_descr)
           /* Chooses the new room */
           newroom = choose_room(self);
           
+          if(trys >= 5)
+            {
+              sem_post(&wizLock);
+              dostuff();
+              goto init;
+            }
+          else
+          trys++;
           /* Goes back to the initial state and try again */
           continue;
         }
