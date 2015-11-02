@@ -38,14 +38,15 @@ void *wizard_func(void *wizard_descr)
   /* Infinite loop */
   while (1)
   {
-  	// check if the thread should be killed or not, if so kill it here
+
+  sem_wait(&wizLock);
+
+  // check if the thread should be killed or not, if so kill it here
 	if(self->threadKill == 1 || check_winner(cube))
 	{
 	  printf("Wizard %c%d killed its thread \n", self->team, self->id);
 	  pthread_exit(NULL);
 	}
-
-	sem_wait(&wizLock);
 
   	if (self->status == 0) // Needed? Could be controlled somewhere else
   	{

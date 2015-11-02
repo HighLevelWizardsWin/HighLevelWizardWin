@@ -38,31 +38,32 @@ int check_winner(struct cube* cube)
   /* Or have function only be called when game is over. Then 0 and 1 can be used
         to determine winner  */
 
-  int frozenCountA, frozenCountB = 0;
+  int frozenCountA = 0;
+  int frozenCountB = 0;
   int i;
   for (i = 0; i < cube->teamA_size; i++)
   {
-    if(cube->teamA_wizards[i]->status == 1){frozenCountA++;}
-    //fprintf(stderr, "frozenCountA[%d]: %d \n",i, frozenCountA); //DEBUGGING
+    if(cube->teamA_wizards[i]->status){frozenCountA++;}
+    fprintf(stderr, "frozenCountA[%d]: %d \n",i, frozenCountA); //DEBUGGING
   }
 
   for (i = 0; i < cube->teamB_size; i++)
   {
-    if(cube->teamB_wizards[i]->status == 1){frozenCountB++;}
-    //fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
+    if(cube->teamB_wizards[i]->status){frozenCountB++;}
+    fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
   }
   if (frozenCountB == cube->teamB_size) // Team A wins
   {
     cube->game_status = 1;
     //print_cube(cube);
-    //printf("Team A is the wisest of the wizard wars! (They won)");
+    printf("Team A is the wisest of the wizard wars! (They won) \n");
     return 1;
   } 
   else if (frozenCountA == cube->teamA_size) // Team B wins
   {
     cube->game_status = 1;
     //print_cube(cube);
-    //printf("Team B is the wisest of the wizard wars! (They won)");
+    printf("Team B is the wisest of the wizard wars! (They won) \n");
     return 2;
   }
   else {print_cube(cube); return 0;} //game is still going
@@ -216,7 +217,7 @@ int interface(void *cube_ref)
   assert(cube);
 
   using_history();
-  pthread_t _wizards[cube->teamA_size + cube->teamB_size]; //creates an array of threads
+  
   while (1)
   {
     line = readline("cube> ");
@@ -252,15 +253,7 @@ int interface(void *cube_ref)
       { 
         cube->game_status = 0; // For first iteration through the loop, shows game is running
         
-        for (i = 0; i < cube->teamA_size; i++)
-        {
-          pthread_create(&_wizards[i], NULL, *wizard_func, cube->teamA_wizards[i]);
-        }
-
-        for (i = 0; i < cube->teamB_size; i++)
-        {
-          pthread_create(&_wizards[cube->teamA_size + i - 1], NULL, *wizard_func, cube->teamB_wizards[i]);
-        }
+        sem_post(&wizLock);
 
         /* Start the game */
 
@@ -489,7 +482,19 @@ int main(int argc, char** argv)
   /* Main game loop? 
         Create all threads? */
 
-  //## I might copy the code currently in the continuous section and make the threads here and then immeditately lock them, then jump into the interface and control the threads from there. but currently the functions are working and we can change that at a later time
+  sem_wait(&wizLock);
+  pthread_t _wizards[cube->teamA_size + cube->teamB_size]; //creates an array of threads
+  
+  for (i = 0; i < cube->teamA_size; i++)
+  {
+	pthread_create(&_wizards[i], NULL, *wizard_func, cube->teamA_wizards[i]);
+  }
+
+  for (i = 0; i < cube->teamB_size; i++)
+  {
+	pthread_create(&_wizards[cube->teamA_size + i - 1], NULL, *wizard_func, cube->teamB_wizards[i]);
+  }
+  
 
   /* Goes in the interface loop */
   res = interface(cube);
