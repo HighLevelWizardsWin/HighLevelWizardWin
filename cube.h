@@ -43,7 +43,7 @@ struct cube {
 
 // Define semaphores here that need to be shared with wizard files.
 
-extern sem_t wizLock; //creates a semaphore mutex that allows us to lock wizards
+sem_t wizLock; //creates a semaphore mutex that allows us to lock wizards
 
 extern void print_wizard(struct wizard *); // Not defined anywhere. Important? #not sure if important either
 extern void kill_wizards(struct wizard *);
