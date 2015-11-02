@@ -34,6 +34,7 @@ struct cube {
   struct wizard **teamA_wizards;
   struct wizard **teamB_wizards;
   int game_status;
+  int single;
 
   /* Pointer to a two-dimensional array of rooms */
   struct room ***rooms;

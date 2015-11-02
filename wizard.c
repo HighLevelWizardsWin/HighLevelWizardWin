@@ -46,8 +46,8 @@ void *wizard_func(void *wizard_descr)
   // check if the thread should be killed or not, if so kill it here
 	if(self->threadKill == 1 || check_winner(cube))
 	{
-	  printf("Wizard %c%d killed its thread \n", self->team, self->id);
-    sem_post(&wizLock);
+	  //printf("Wizard %c%d killed its thread \n", self->team, self->id);
+      if(!cube->single){sem_post(&wizLock);}
 	  pthread_exit(NULL);
 	}
 
@@ -63,7 +63,7 @@ void *wizard_func(void *wizard_descr)
 	      if (!try_room(self, oldroom, newroom))
 	      {
           /* Waits a random amount of time */
-          printf("The door is locked. You should learn teleport. \n");
+          printf("Request denied, room locked!\n");
           dostuff();
           
           /* Chooses the new room */
@@ -71,7 +71,7 @@ void *wizard_func(void *wizard_descr)
           
           if(trys >= 5)
             {
-              sem_post(&wizLock);
+              if(!cube->single){sem_post(&wizLock);}
               dostuff();
               goto init;
             }
@@ -98,7 +98,7 @@ void *wizard_func(void *wizard_descr)
       /* If there is not another wizard does nothing */
       if (other == NULL)
   	  {
-  	    printf("Wizard %c%d in room (%d,%d) finds nobody around:  ¯\\_(ツ)_/¯  \n",
+  	    printf("Wizard %c%d in room (%d,%d) finds nobody around\n",
   	  	 self->team, self->id, newroom->x, newroom->y);
   	    /* Fill in */
   	    // Seems fine to me...
@@ -109,14 +109,14 @@ void *wizard_func(void *wizard_descr)
   	    {
   	      if (other->status == 0) /* Checks if the opponent is active */
   	      {
-  	  	  printf("Wizard %c%d in room (%d,%d) finds active enemy. AGH!\n",
+  	  	  printf("Wizard %c%d in room (%d,%d) finds active enemy.\n",
   	  	  self->team, self->id, newroom->x, newroom->y);
   
   	  	  fight_wizard(self, other, newroom);
   	  	  }
   	      else
   	  	  {
-  	  	    printf("Wizard %c%d in room (%d,%d) finds enemy already frozen. What a nerd.\n",
+  	  	    printf("Wizard %c%d in room (%d,%d) finds enemy already frozen.\n",
   	  		 self->team, self->id, newroom->x, newroom->y);
   	  	  }
   	    }
@@ -128,7 +128,7 @@ void *wizard_func(void *wizard_descr)
   	  	  }
   	  	  else /* Friend is not frozen. BRAG TIME! */
   	  	  {
-  	  	  	printf("The Wizards flex at each other. This could last hours. \n");
+  	  	  	//printf("The Wizards flex at each other. This could last hours. \n");
   	  	  	dostuff(); // The flexing time
   	  	  }
   	    }
@@ -137,7 +137,7 @@ void *wizard_func(void *wizard_descr)
   	    
   
   	  }
-  	  sem_post(&wizLock);
+  	  if(!cube->single){sem_post(&wizLock);}
       /* Thinks about what to do next */
       dostuff();
   
@@ -147,7 +147,7 @@ void *wizard_func(void *wizard_descr)
     }
     else
     {
-    	sem_post(&wizLock); //I was getting a deadlock when the wizard sem_wait() and then gets frozen, they never gave up control.
+    	if(!cube->single){sem_post(&wizLock);} //I was getting a deadlock when the wizard sem_wait() and then gets frozen, they never gave up control.
     }
   }
   

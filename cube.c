@@ -44,29 +44,29 @@ int check_winner(struct cube* cube)
   for (i = 0; i < cube->teamA_size; i++)
   {
     if(cube->teamA_wizards[i]->status){frozenCountA++;}
-    fprintf(stderr, "frozenCountA[%d]: %d \n",i, frozenCountA); //DEBUGGING
+    //fprintf(stderr, "frozenCountA[%d]: %d \n",i, frozenCountA); //DEBUGGING
   }
 
   for (i = 0; i < cube->teamB_size; i++)
   {
     if(cube->teamB_wizards[i]->status){frozenCountB++;}
-    fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
+    //fprintf(stderr, "frozenCountB[%d]: %d \n",i, frozenCountB); //DEBUGGING
   }
   if (frozenCountB == cube->teamB_size) // Team A wins
   {
     cube->game_status = 1;
     //print_cube(cube);
-    printf("Team A is the wisest of the wizard wars! (They won) \n");
+    //printf("Team A is the wisest of the wizard wars! (They won) \n");
     return 1;
   } 
   else if (frozenCountA == cube->teamA_size) // Team B wins
   {
     cube->game_status = 1;
     //print_cube(cube);
-    printf("Team B is the wisest of the wizard wars! (They won) \n");
+    //printf("Team B is the wisest of the wizard wars! (They won) \n");
     return 2;
   }
-  else {print_cube(cube); return 0;} //game is still going
+  else {return 0;} //game is still going
 
 }
 
@@ -239,13 +239,14 @@ int interface(void *cube_ref)
 	    else
 	    { 
 	      cube->game_status = 0; // For first iteration through the loop, shows game is running
-	      
+	    
+	    cube->single = 1;
         sem_post(&wizLock);
-        dostuff();
-        sem_wait(&wizLock);
-        /* Start the game */
 
-	      /* Fill in */
+        int winner = 0;
+	  	winner = check_winner(cube);
+        if(winner == 1){printf("Team A won the game! \n");}
+	  	else if(winner == 2){printf("Team B won the game! \n");}
 	    }
 	  }
     else if (!strcmp(command, "c"))
@@ -257,9 +258,13 @@ int interface(void *cube_ref)
         
         sem_post(&wizLock);
 
-        /* Start the game */
-
-        /* Fill in */
+        int winner = 0;
+        while(!winner)
+        {
+	  	    winner = check_winner(cube);
+        }
+        if(winner == 1){printf("Team A won the game! \n");}
+	  	else if(winner == 2){printf("Team B won the game! \n");}
       }  
     }
     else if (!strcmp(command, "stop"))
@@ -419,6 +424,7 @@ int main(int argc, char** argv)
   assert(cube);
   cube->size = cube_size;
   cube->game_status = -1;
+  cube->single = 0;
 
   /* Creates the rooms */
   cube->rooms = malloc(sizeof(struct room **) * cube_size);
@@ -622,7 +628,7 @@ int fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
   /* The opponent becomes frozen */
   if (res == 0)
   {
-    printf("Wizard %c%d in room (%d,%d) freezes enemy %c%d. HUZZAH!\n", self->team, self->id, room->x, room->y, other->team, other->id);
+    printf("Wizard %c%d in room (%d,%d) freezes enemy %c%d.\n", self->team, self->id, room->x, room->y, other->team, other->id);
 
     /* Fill in */
     //only thing I added was setting the status of the loser to 1 (frozen)
@@ -633,7 +639,7 @@ int fight_wizard(struct wizard *self, struct wizard *other, struct room *room)
 
   /* Self freezes and release the lock */
 
-  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d. Drat!\n", self->team, self->id, room->x, room->y, other->team, other->id);
+  printf("Wizard %c%d in room (%d,%d) gets frozen by enemy %c%d.\n", self->team, self->id, room->x, room->y, other->team, other->id);
   self->status = 1;
   /* Fill in */
   //only thing I added here was setting the status of the loser to 1 (frozen)
@@ -651,7 +657,7 @@ int free_wizard(struct wizard *self, struct wizard *other, struct room* room)
   /* The friend is unfrozen */
   if (res == 0)
   {
-    printf("Wizard %c%d in room (%d,%d) unfreezes friend %c%d. Yay friendship!\n",
+    printf("Wizard %c%d in room (%d,%d) unfreezes friend %c%d.\n",
      self->team, self->id, room->x, room->y,
      other->team, other->id);
 
@@ -662,7 +668,7 @@ int free_wizard(struct wizard *self, struct wizard *other, struct room* room)
   }
 
   /* The spell failed */
-  printf("Wizard %c%d in room (%d,%d) fails to unfreeze friend %c%d. Brrrr...\n",
+  printf("Wizard %c%d in room (%d,%d) fails to unfreeze friend %c%d.\n",
 	self->team, self->id, room->x, room->y,
 	other->team, other->id);
 
