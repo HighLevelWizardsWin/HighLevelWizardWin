@@ -39,18 +39,20 @@ void *wizard_func(void *wizard_descr)
   while (1)
   {
   	// check if the thread should be killed or not, if so kill it here
-	  if(self->threadKill == 1)
-	  {
-	  	printf("Wizard %c%d killed its thread \n", self->team, self->id);
-	  	pthread_exit(NULL);
-	  }
-	  else {printf("threadKill == %d \n", self->threadKill);}
+	if(self->threadKill == 1)
+	{
+	  printf("Wizard %c%d killed its thread \n", self->team, self->id);
+	  pthread_exit(NULL);
+	}
+
+	sem_wait(&wizLock);
 
   	if (self->status == 0) // Needed? Could be controlled somewhere else
   	{
       /* Loops until he's able to get a hold on both the old and new rooms */
       while (1)
 	    {
+
 	      printf("Wizard %c%d in room (%d,%d) wants to go to room (%d,%d)\n",
 	      self->team, self->id, oldroom->x, oldroom->y, newroom->x, newroom->y);
 	    
@@ -123,12 +125,17 @@ void *wizard_func(void *wizard_descr)
   	    
   
   	  }
-
+  	  sem_post(&wizLock);
       /* Thinks about what to do next */
       dostuff();
   
       oldroom = newroom;
       newroom = choose_room(self);
+
+    }
+    else
+    {
+    	sem_post(&wizLock); //I was getting a deadlock when the wizard sem_wait() and then gets frozen, they never gave up control.
     }
   }
   
