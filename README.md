@@ -1,3 +1,3 @@
 # HighLevelWizardWin
-Kasey Kolyno U# <redacted>
-Isaac Evans U# <redacted>
+Kasey Kolyno U# redacted
+Isaac Evans U# redacted
